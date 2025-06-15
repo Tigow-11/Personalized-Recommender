@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}🛠️ Admin Panel{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<style>
+    .admin-title {
+        font-size: 2.2rem;
+        font-weight: bold;
+    }
+    .admin-section {
+        background: #f9f9f9;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom: 40px;
+    }
+    .table thead {
+        background-color: #0d6efd;
+        color: white;
+    }
+    .table td, .table th {
+        vertical-align: middle;
+    }
+    .user-action-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+</style>
+
+<div class="container py-5 animate__animated animate__fadeIn">
+    <div class="text-center mb-4">
+        <h2 class="admin-title text-primary animate__animated animate__fadeInDown">
+            🛡️ Super Admin Panel
+        </h2>
+        <p class="text-muted animate__animated animate__fadeInUp">
+            Welcome, master admin! Manage users and courses below.
+        </p>
+    </div>
+
+    <!-- 👤 User Management -->
+    <div class="admin-section animate__animated animate__fadeInUp">
+        <h4 class="text-dark mb-4">👥 Registered Users</h4>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Date Joined</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                    <td>
+                        {% if user.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-danger">Blocked</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not user.is_superuser %}
+                        <div class="user-action-form">
+                            <form method="post" action="{% url 'toggle_user_status' user.id %}">
+                                {% csrf_token %}
+                                {% if user.is_active %}
+                                <button class="btn btn-sm btn-danger">🚫 Block</button>
+                                {% else %}
+                                <button class="btn btn-sm btn-success">✅ Unblock</button>
+                                {% endif %}
+                            </form>
+                            <form method="post" action="{% url 'delete_user' user.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-danger">🗑️ Delete</button>
+                            </form>
+                        </div>
+                        {% else %}
+                            <span class="text-muted">Superuser</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted">No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 📚 Course Links Management -->
+    <div class="admin-section animate__animated animate__fadeInUp">
+        <h4 class="text-dark mb-4">📚 Update Course Links</h4>
+        <p class="text-muted">Update broken links directly from CSV and JSON sources.</p>
+        <form method="post" action="{% url 'update_course_link' %}" class="row g-3">
+            {% csrf_token %}
+            <div class="col-md-5">
+                <label for="title" class="form-label">Course Title</label>
+                <input type="text" class="form-control" name="title" placeholder="Enter course title" required>
+            </div>
+            <div class="col-md-5">
+                <label for="new_link" class="form-label">New Link</label>
+                <input type="url" class="form-control" name="new_link" placeholder="Enter updated course URL" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-primary w-100">🔄 Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

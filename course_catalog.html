@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Course Catalog{% endblock %}
+
+{% block content %}
+<!-- Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<!-- Custom CSS for Hover and Badges -->
+<style>
+.card-hover:hover {
+    transform: scale(1.03);
+    transition: 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+    margin-right: 5px;
+    border-radius: 0.5rem;
+}
+
+.badge-level { background-color: #007bff; color: white; }
+.badge-type { background-color: #28a745; color: white; }
+.badge-source { background-color: #6c757d; color: white; }
+</style>
+
+<div class="container py-5 animate__animated animate__fadeInUp">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary">📚 Explore Our Course Catalog</h2>
+        <p class="text-muted">Discover curated learning materials tailored to your goals and experience level.</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for course in courses %}
+        <div class="col">
+            <div class="card card-hover h-100 shadow-sm border-0 rounded-4 animate__animated animate__zoomIn">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-dark fw-semibold">
+                        {{ course.title|truncatewords:8 }}
+                    </h5>
+
+                    <p class="card-text small text-muted">
+                        {% if course.duration and course.duration != "N/A" %}
+                        <strong>Duration:</strong> {{ course.duration }}<br>
+                        {% endif %}
+                        {% if course.level and course.level != "N/A" %}
+                        <strong>Level:</strong> {{ course.level }}<br>
+                        {% endif %}
+                        {% if course.course_type and course.course_type != "N/A" %}
+                        <strong>Type:</strong> {{ course.course_type }}
+                        {% endif %}
+                    </p>
+
+                    <div class="mb-2 mt-auto">
+                        {% if course.level and course.level != "N/A" %}
+                        <span class="badge badge-level">{{ course.level }}</span>
+                        {% endif %}
+                        {% if course.course_type and course.course_type != "N/A" %}
+                        <span class="badge badge-type">{{ course.course_type }}</span>
+                        {% endif %}
+                        {% if course.source and course.source != "N/A" %}
+                        <span class="badge badge-source">{{ course.source }}</span>
+                        {% endif %}
+                    </div>
+
+                    <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-primary rounded-pill w-100 mt-2">
+                        🔍 View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="text-muted">🚫 No courses found in the catalog.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{% url 'explore_more_1' %}" class="btn btn-outline-info rounded-pill me-2">
+            🌍 Explore More 1
+        </a>
+        <a href="{% url 'explore_more_2' %}" class="btn btn-outline-success rounded-pill">
+            🌎 Explore More 2
+        </a>
+    </div>
+</div>
+{% endblock %}

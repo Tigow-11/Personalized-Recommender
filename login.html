@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Login - Learning Recommender{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<div class="container py-5 animate__animated animate__fadeIn">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4 shadow-lg bg-light border-0 rounded-4">
+                <h2 class="text-center text-dark mb-4">🔐 Student Login</h2>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger rounded-3">
+                            <ul class="mb-0">
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">👤 Username</label>
+                        {% render_field form.username class="form-control form-control-lg" placeholder="Enter your username" %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">🔒 Password</label>
+                        {% render_field form.password class="form-control form-control-lg" placeholder="Enter your password" %}
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg shadow">🚀 Login</button>
+                    </div>
+
+                    <p class="text-center mt-3">
+                        Don’t have an account? 
+                        <a href="{% url 'register' %}" class="fw-bold text-decoration-none text-success">Register</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

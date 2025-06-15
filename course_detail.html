@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ course.title }} - Course Details{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<div class="container py-5 animate__animated animate__fadeInUp">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+
+            {% if messages %}
+            <div class="alert alert-info animate__animated animate__fadeInDown">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="card shadow-lg p-4 rounded-4 bg-light animate__animated animate__fadeIn">
+                <h2 class="fw-bold text-primary mb-4">{{ course.title }}</h2>
+
+                <div class="mb-3">
+                    <span class="badge bg-info me-2">{{ course.level|title }}</span>
+                    <span class="badge bg-secondary">{{ course.difficulty|title }}</span>
+                </div>
+
+                <p class="text-muted">{{ course.description }}</p>
+
+                <ul class="list-group mb-4">
+                    <li class="list-group-item"><strong>🕓 Duration:</strong> {{ course.duration }}</li>
+                    <li class="list-group-item"><strong>🔖 Tags:</strong> {{ course.tags }}</li>
+                    <li class="list-group-item"><strong>🌐 Source:</strong> {{ course.source }}</li>
+                </ul>
+
+                <div class="d-flex flex-wrap gap-3">
+                    {% if course.link %}
+                        <a href="{{ course.link }}" target="_blank" class="btn btn-success shadow rounded-pill">
+                            🚀 Start Learning
+                        </a>
+                    {% endif %}
+
+                    {% if not interaction or not interaction.viewed %}
+                    <form method="post" action="{% url 'mark_viewed' course.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary rounded-pill">
+                            👀 Mark as Viewed
+                        </button>
+                    </form>
+                    {% else %}
+                    <span class="badge bg-primary rounded-pill align-self-center">Already Viewed 👁</span>
+                    {% endif %}
+
+                    {% if not interaction or not interaction.completed %}
+                    <form method="post" action="{% url 'mark_completed' course.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-success rounded-pill">
+                            ✅ Mark as Completed
+                        </button>
+                    </form>
+                    {% else %}
+                    <span class="badge bg-success rounded-pill align-self-center">Completed ✅</span>
+                    {% endif %}
+                </div>
+
+             <div class="mt-4 d-flex flex-wrap gap-3">
+              <a href="{% url 'course_catalog' %}" class="btn btn-outline-secondary rounded-pill">
+               🔙 Back to Course Catalog
+          </a>
+          <a href="{% url 'my_activity' %}" class="btn btn-outline-dark rounded-pill">
+         📊 View My Activity
+    </a>
+</div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

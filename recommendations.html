@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}🎓 Your AI Recommendations{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<style>
+    .recommend-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 1.5rem;
+    }
+    .recommend-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+    }
+    .recommend-btn {
+        transition: all 0.3s ease;
+    }
+    .recommend-btn:hover {
+        background-color: #1e7e34 !important;
+        transform: scale(1.05);
+    }
+    .icon-badge {
+        font-size: 1.3rem;
+        margin-right: 8px;
+    }
+</style>
+
+<div class="container py-5 animate__animated animate__fadeIn">
+    <!-- 🔹 Header -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold animate__animated animate__fadeInDown">🚀 Tailored Learning Recommendations</h2>
+        <p class="text-muted animate__animated animate__fadeInUp">
+            Powered by AI — smart suggestions based on your level, interests, goals, and topics!
+        </p>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-dark btn-lg rounded-pill shadow-sm animate__animated animate__fadeInUp">
+            ⬅️ Back to Dashboard
+        </a>
+    </div>
+
+    <!-- 🔸 Course List -->
+    {% if recommended_courses %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for course in recommended_courses %}
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0 recommend-card animate__animated animate__zoomIn">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-primary mb-2 fw-semibold">
+                        {{ course.title|default:"Untitled Course"|truncatechars:60 }}
+                    </h5>
+
+                    <p class="card-text text-muted mb-3">
+                        {% if course.level %}
+                        <span class="icon-badge">🎯</span><strong>Level:</strong> {{ course.level }}<br>
+                        {% endif %}
+                        {% if course.tags %}
+                        <span class="icon-badge">🏷️</span><strong>Tags:</strong> {{ course.tags }}<br>
+                        {% endif %}
+                        {% if course.source %}
+                        <span class="icon-badge">📚</span><strong>Source:</strong> {{ course.source }}<br>
+                        {% endif %}
+                        {% if course.type %}
+                        <span class="icon-badge">💰</span><strong>Type:</strong> {{ course.type }}
+                        {% endif %}
+                    </p>
+
+                    <!-- 🔹 Action Buttons -->
+                    <div class="mt-auto">
+                        {% if course.link %}
+                        <a href="{{ course.link }}" target="_blank" rel="noopener noreferrer"
+                           class="btn btn-success recommend-btn rounded-pill mb-2 w-100">
+                            🌐 Start Learning
+                        </a>
+                        {% endif %}
+
+                        {% if course.id and course.id|add:0 > 0 %}
+                        <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-primary rounded-pill mb-2 w-100">
+                            🔍 View Details
+                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'mark_viewed' course.id %}" class="btn btn-warning w-50 btn-sm">👁 Mark Viewed</a>
+                            <a href="{% url 'mark_completed' course.id %}" class="btn btn-info w-50 btn-sm">✅ Completed</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- ❌ No Recommendations -->
+    <div class="alert alert-info text-center rounded-4 shadow-sm animate__animated animate__fadeInUp mt-5">
+        <h5>🚫 No Recommendations Found</h5>
+        <p>Try updating your profile or exploring the course catalog to improve results.</p>
+        <a href="{% url 'setup_profile' %}" class="btn btn-outline-secondary rounded-pill mt-2">
+            🛠 Update Profile
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

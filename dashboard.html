@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}📊 Dashboard - Learning Recommender{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<style>
+    .btn-edit-profile {
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+    }
+    .btn-edit-profile:hover {
+        background-color: #0d6efd !important;
+        color: #fff !important;
+    }
+</style>
+
+<div class="container py-5 animate__animated animate__fadeIn">
+
+    <!-- 👋 Welcome -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold animate__animated animate__fadeInDown">
+            👋 Welcome, {{ user.first_name|default:user.username }}!
+        </h2>
+        <p class="text-muted animate__animated animate__fadeInUp">
+            This is your AI-powered learning dashboard. Let's unlock your potential!
+        </p>
+        <div class="d-flex flex-column flex-md-row justify-content-center gap-3 mt-3 animate__animated animate__fadeInUp">
+            <a href="{% url 'course_catalog' %}" class="btn btn-outline-success btn-lg shadow rounded-pill">
+                🌐 Explore Course Catalog
+            </a>
+            <a href="{% url 'setup_profile' %}" class="btn btn-outline-primary btn-lg shadow rounded-pill btn-edit-profile">
+                ✏️ Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- ✅ Show HINT only if user has no interactions -->
+    {% if show_hint %}
+    <div class="alert alert-warning text-center shadow rounded-4 animate__animated animate__fadeInUp mb-4">
+        <h5 class="fw-bold">🧭 Personalized Tip</h5>
+        <p>Looks like you haven’t explored any courses yet.</p>
+        <p>Browsing the catalog helps our AI improve your recommendations! 🚀</p>
+        <a href="{% url 'course_catalog' %}" class="btn btn-outline-dark rounded-pill">Explore Courses</a>
+    </div>
+    {% endif %}
+
+    <!-- 👤 Profile Overview -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow rounded-4 bg-light p-4 animate__animated animate__fadeInUp">
+                <h5 class="text-primary mb-3">👤 Your Learning Profile</h5>
+                <ul class="list-group list-group-flush fs-6">
+                    <li class="list-group-item"><strong>📘 Level:</strong> {{ profile.level|default:"N/A" }}</li>
+                    <li class="list-group-item"><strong>💡 Interests:</strong> {{ profile.interests|default:"N/A" }}</li>
+                    <li class="list-group-item"><strong>🎯 Goals:</strong> {{ profile.goals|default:"N/A" }}</li>
+                    <li class="list-group-item"><strong>📖 Topics:</strong> {{ profile.learning_topics|default:"N/A" }}</li>
+                </ul>
+            </div>
+
+            <!-- 🎯 Centered AI Recommendation Button -->
+            <div class="text-center mt-4 animate__animated animate__fadeInUp">
+                <a href="{% url 'ai_recommendations' %}" class="btn btn-primary btn-lg shadow rounded-pill">
+                    🤖 Get AI Recommendations
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

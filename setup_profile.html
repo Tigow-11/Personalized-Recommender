@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Set Up Profile - Learning Recommender{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<div class="container py-5 animate__animated animate__fadeInUp">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card p-4 shadow-lg bg-light border-0 rounded-4">
+                <h2 class="text-center text-dark mb-4">🎯 Set Up Your Learning Profile</h2>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger rounded-3">
+                            <ul class="mb-0">
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <!-- LEVEL -->
+                    <div class="mb-3">
+                        <label class="form-label">📚 Current Level</label>
+                        {% render_field form.level class="form-select" %}
+                    </div>
+
+                    <!-- INTERESTS -->
+                    <div class="mb-3">
+                        <label class="form-label">💡 Your Interests</label>
+                        {% render_field form.interests class="form-control" placeholder="Type your interests here, separated by commas" %}
+                    </div>
+
+                    <div class="mb-2 text-muted small">
+                        Suggested Interests (click if helpful):
+                    </div>
+                    <div class="row mb-3">
+                        {% for tag in interests %}
+                            <div class="col-md-3 mb-2">
+                                <label class="form-check small">
+                                    <input type="checkbox" name="interests" value="{{ tag }}" class="form-check-input"
+                                           {% if tag in selected_interests %}checked{% endif %}>
+                                    {{ tag|title }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- GOALS -->
+                    <div class="mb-3">
+                        <label class="form-label">🎯 Learning Goals</label>
+                        {% render_field form.goals class="form-control" placeholder="e.g. Get a job, Pass a course, Improve skills" %}
+                    </div>
+
+                    <!-- LEARNING TOPICS -->
+                    <div class="mb-3">
+                        <label class="form-label">📖 Topics You Want to Learn</label>
+                        {% render_field form.learning_topics class="form-control" placeholder="Type topics you want to learn, separated by commas" %}
+                    </div>
+
+                    <div class="mb-2 text-muted small">
+                        Suggested Topics (click if helpful):
+                    </div>
+                    <div class="row mb-3">
+                        {% for tag in topics %}
+                            <div class="col-md-3 mb-2">
+                                <label class="form-check small">
+                                    <input type="checkbox" name="learning_topics" value="{{ tag }}" class="form-check-input"
+                                           {% if tag in selected_topics %}checked{% endif %}>
+                                    {{ tag|title }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg shadow-sm">✅ Save & Continue</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
